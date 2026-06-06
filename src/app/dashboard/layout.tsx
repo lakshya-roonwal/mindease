@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { name: "Insights", href: "/dashboard/insights", icon: BarChart3 },
   { name: "AI Coach", href: "/dashboard/coach", icon: MessageSquare },
   { name: "Journal", href: "/dashboard/journal", icon: BookOpen },
-  { name: "Breathe", href: "/dashboard/breathe", icon: Wind },
+  { name: "Toolkit", href: "/dashboard/toolkit", icon: Sparkles },
 ];
 
 export default function DashboardLayout({
