@@ -21,7 +21,7 @@ import { signOut } from "next-auth/react";
 const NAV_ITEMS = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Insights", href: "/dashboard/insights", icon: BarChart3 },
-  { name: "Calm Corner", href: "/dashboard/chat", icon: MessageSquare },
+  { name: "AI Coach", href: "/dashboard/coach", icon: MessageSquare },
   { name: "Journal", href: "/dashboard/journal", icon: BookOpen },
   { name: "Breathe", href: "/dashboard/breathe", icon: Wind },
 ];
