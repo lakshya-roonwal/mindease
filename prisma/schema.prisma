@@ -40,14 +40,25 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  examType      String?
-  examDate      DateTime?
   accounts      Account[]
   sessions      Session[]
   streak        Streak?
   journalEntries JournalEntry[]
   moodCheckIns   MoodCheckIn[]
+  exams          Exam[]
+  reminderTime   String?   @default("21:00")
+  remindersEnabled Boolean @default(true)
 }
+
+model Exam {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // NEET, JEE, etc.
+  date      DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 
 model MoodCheckIn {
   id          String   @id @default(cuid())

@@ -10,18 +10,28 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const userStreak = await prisma.streak.findUnique({
-    where: { userId: session.user.id },
-  });
+  const [userStreak, userData] = await Promise.all([
+    prisma.streak.findUnique({
+      where: { userId: session.user.id },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { exams: true }
+    })
+  ]);
 
   return (
     <DashboardView 
       user={{
-        name: session.user.name || null,
-        examType: session.user.examType || null,
-        examDate: session.user.examDate || null,
+        name: userData?.name || null,
+        exams: userData?.exams.map(e => ({
+            id: e.id,
+            type: e.type,
+            date: e.date
+        })) || [],
       }} 
       streakCount={userStreak?.count || 0} 
     />
   );
 }
+

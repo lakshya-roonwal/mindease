@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import StreakTracker from "./StreakTracker";
-import ExamCountdown from "./ExamCountdown";
+import ExamCountdown from "@/components/settings/ExamCountdown";
 import MoodCheckIn from "./MoodCheckIn";
 import { Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -10,8 +10,7 @@ import Link from "next/link";
 interface DashboardViewProps {
   user: {
     name: string | null;
-    examType: string | null;
-    examDate: Date | null;
+    exams: Array<{ id: string; type: string; date: Date | string }>;
   };
   streakCount: number;
 }
@@ -52,10 +51,7 @@ export default function DashboardView({ user, streakCount }: DashboardViewProps)
 
       <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StreakTracker count={streakCount} />
-        <ExamCountdown 
-          examDate={user.examDate} 
-          examType={user.examType} 
-        />
+        <ExamCountdown exams={user.exams} />
       </motion.div>
 
       <motion.div variants={item}>
