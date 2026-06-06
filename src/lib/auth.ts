@@ -20,6 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },
+          include: { exams: true }
         });
 
         if (!user || !user.password) {
@@ -39,8 +40,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
-          examType: user.examType,
-          examDate: user.examDate,
+          examType: user.exams?.[0]?.type || "Competitive Exams",
+          examDate: user.exams?.[0]?.date || null,
         };
       },
     }),

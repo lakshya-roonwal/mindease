@@ -1,8 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export interface UserContext {
   name: string;
@@ -52,4 +50,5 @@ export function detectCrisisSignals(message: string): boolean {
   return signals.some(signal => lowercaseMessage.includes(signal));
 }
 
-export default anthropic;
+export default genAI;
+

@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0].message },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
@@ -43,8 +43,14 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
-        examType,
-        examDate: examDate ? new Date(examDate) : null,
+        ...(examType && examDate ? {
+          exams: {
+            create: {
+              type: examType,
+              date: new Date(examDate),
+            }
+          }
+        } : {}),
         streak: {
           create: {
             count: 0,

@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import anthropic, { SYSTEM_PROMPT, buildUserContext } from "@/lib/ai";
+import genAI, { SYSTEM_PROMPT, buildUserContext } from "@/lib/ai";
 import { NextResponse } from "next/server";
 import { subDays } from "date-fns";
 
@@ -54,24 +54,25 @@ export async function POST(req: Request) {
       topTriggers,
     });
 
-    const stream = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
-      max_tokens: 1000,
-      system: `${SYSTEM_PROMPT}\n\nUSER CONTEXT:\n${userContext}`,
-      messages: messages.map((m: any) => ({
-        role: m.role,
-        content: m.content,
-      })),
-      stream: true,
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash", 
+      systemInstruction: `${SYSTEM_PROMPT}\n\nUSER CONTEXT:\n${userContext}` 
     });
+
+    const formattedMessages = messages.map((m: any) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+    const stream = await model.generateContentStream({ contents: formattedMessages });
 
     const encoder = new TextEncoder();
     const responseStream = new ReadableStream({
       async start(controller) {
-        for await (const chunk of stream) {
-          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-            const text = chunk.delta.text;
-            controller.enqueue(encoder.encode(text));
+        for await (const chunk of stream.stream) {
+          const chunkText = chunk.text();
+          if (chunkText) {
+            controller.enqueue(encoder.encode(chunkText));
           }
         }
         controller.close();
@@ -88,3 +89,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
